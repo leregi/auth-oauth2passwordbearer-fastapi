@@ -10,7 +10,7 @@ app = FastAPI()
 SECRET_KEY = "secret"
 
 # # Define the OAuth2 Password Bearer for token-based authentication
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", scopes={"read": "Read-only access", "write": "Write access"})
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", scopes={"read": "Read-only access", "write": "Write access", "admin": "Admin access"})
 
 
 # # Pydantic model for a user
@@ -67,13 +67,13 @@ async def get_current_user(security_scopes: SecurityScopes, token: str = Depends
     return user 
 
 # Dependency for checking if the current user has required scopes
-def has_required_scopes(current_user: User = Security(get_current_user, scopes=["read"]) ):
-    if current_user == None:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Invalid user",
-        )
-    return current_user
+# def has_required_scopes(current_user: User = Security(get_current_user, scopes=["read"]) ):
+#     if current_user == None:
+#         raise HTTPException(
+#             status_code=status.HTTP_403_FORBIDDEN,
+#             detail="Invalid user",
+#         )
+#     return current_user
 
 async def has_admin_access(current_user_scopes: User = Depends(get_current_user)):
     if "admin" not in current_user_scopes.scopes:
